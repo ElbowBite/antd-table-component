@@ -70,8 +70,10 @@ const ClientSide = ({
 
   //  Date conversion to readable format
   const convertToDate = (date) => {
-    const time = `${new Date(date).getHours()}:${new Date(date).getMinutes()}`;
-    const transDate = `${new Date(date).getDate()}.${new Date(date).getMonth()}.${new Date(date).getFullYear()}`;
+    const minutes = new Date(date).getMinutes() < 10 ? `0${new Date(date).getMinutes()}` : new Date(date).getMinutes();
+    const time = `${new Date(date).getHours()}:${minutes}`;
+    const month = new Date(date).getMonth() < 10 ? `0${new Date(date).getMonth()}` : new Date(date).getMonth();
+    const transDate = `${new Date(date).getDate()}.${month}.${new Date(date).getFullYear()}`;
     return `${transDate} ${time}`;
   };
 
@@ -98,7 +100,7 @@ const ClientSide = ({
         dataIndex: 'amount',
         key: 'amount',
         sorter: (a, b) => a.amount - b.amount,
-        render: (value, column) => `${column.currency.symbol}${value}`,
+        render: (value, column) => <><span style={{ fontSize: '11px', color: '#1890ff' }}>{column.currency.symbol}</span><span>{value}</span></>,
       },
       {
         title: 'Type',
