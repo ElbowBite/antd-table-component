@@ -2,7 +2,7 @@ import React from 'react';
 import resolvePath from 'object-resolve-path';
 
 import ReactModal from 'react-modal';
-import { Card, Button, Avatar } from 'antd';
+import { Card, Button/* , Avatar */ } from 'antd';
 
 import styles from './TransactionDetails.module.scss'; // Custom classes for modal styling
 import './ModalStyles.css'; //  Additional modal styles
@@ -22,7 +22,7 @@ const TransactionDetails = ({
     overlayClassName={styles.overlay}
   >
     <Card title="Transaction Details" style={{ width: '100%', height: '100%' }}>
-      <Avatar size="large" icon="user" />
+      {/* <Avatar size="large" icon="user" /> */}
       <p><strong>Creation Date: </strong>{convertToDate(modalData.creationDate)}</p>
       <p><strong>Value Date: </strong>{convertToDate(modalData.valueDate)}</p>
       <p><strong>Booking Date: </strong>{convertToDate(modalData.bookingDate)}</p>

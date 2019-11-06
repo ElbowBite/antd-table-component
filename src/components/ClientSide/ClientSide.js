@@ -90,8 +90,8 @@ const ClientSide = ({
         title: 'Amount',
         dataIndex: 'amount',
         key: 'amount',
-        render: (value, column) => `${column.currency.symbol}${value}`,
         sorter: (a, b) => a.amount - b.amount,
+        render: (value, column) => `${column.currency.symbol}${value}`,
       },
       {
         title: 'Type',
@@ -99,6 +99,7 @@ const ClientSide = ({
         key: 'type',
         filters: [{ text: 'DEPOSIT', value: 'DEPOSIT' }, { text: 'WITHDRAWAL', value: 'WITHDRAWAL' }, { text: 'TRANSFER', value: 'TRANSFER' }],
         onFilter: (value, record) => record.type.includes(value),
+        render: (type) => <span style={{ color: `${type === 'DEPOSIT' ? 'limegreen' : type === 'WITHDRAWAL' ? 'tomato' : 'royalblue'}` }}>{type}</span>,
       },
       {
         title: 'Linked Account',
@@ -113,16 +114,17 @@ const ClientSide = ({
   return (
     <>
       <div style={{ padding: '15px' }}>
-        <Table
-          dataSource={transList}
-          columns={columns}
-          pagination={{ showSizeChanger: true }}
-          rowKey="id"
-          onRow={(record) => ({
-            onClick: () => handleClick(record),
-          })}
-          loading={transList.length ? false : <Spin tip="Loading..." />}
-        />
+        <Spin size="large" tip="Loading transactions..." spinning={!transList.length}>
+          <Table
+            dataSource={transList}
+            columns={columns}
+            pagination={{ showSizeChanger: true }}
+            rowKey="id"
+            onRow={(record) => ({
+              onClick: () => handleClick(record),
+            })}
+          />
+        </Spin>
       </div>
       <TrasactionDetails
         modalShown={modalShown}
