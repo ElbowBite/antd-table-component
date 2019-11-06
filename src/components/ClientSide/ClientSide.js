@@ -31,19 +31,19 @@ const ClientSide = ({
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => confirm()}
+          onPressEnter={confirm}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
           type="primary"
-          onClick={() => confirm()}
+          onClick={confirm}
           icon="search"
           size="small"
           style={{ width: 90, marginRight: 8 }}
         >
           Search
         </Button>
-        <Button onClick={() => clearFilters()} size="small" style={{ width: 90 }}>
+        <Button onClick={clearFilters} size="small" style={{ width: 90 }}>
           Reset
         </Button>
       </div>
@@ -57,7 +57,7 @@ const ClientSide = ({
       .includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
-        setTimeout(() => inputRef.current.select());
+        setTimeout(inputRef.current.select);
       }
     },
   });
@@ -73,6 +73,13 @@ const ClientSide = ({
     const time = `${new Date(date).getHours()}:${new Date(date).getMinutes()}`;
     const transDate = `${new Date(date).getDate()}.${new Date(date).getMonth()}.${new Date(date).getFullYear()}`;
     return `${transDate} ${time}`;
+  };
+
+  // Transaction type colors
+  const COLORS = {
+    DEPOSIT: 'limegreen',
+    WITHDRAWAL: 'tomato',
+    TRANSFER: 'royalblue',
   };
 
   //  Table column structure and props
@@ -99,7 +106,7 @@ const ClientSide = ({
         key: 'type',
         filters: [{ text: 'DEPOSIT', value: 'DEPOSIT' }, { text: 'WITHDRAWAL', value: 'WITHDRAWAL' }, { text: 'TRANSFER', value: 'TRANSFER' }],
         onFilter: (value, record) => record.type.includes(value),
-        render: (type) => <span style={{ color: `${type === 'DEPOSIT' ? 'limegreen' : type === 'WITHDRAWAL' ? 'tomato' : 'royalblue'}` }}>{type}</span>,
+        render: (type) => <span style={{ color: COLORS[type] }}>{type}</span>,
       },
       {
         title: 'Linked Account',

@@ -20,6 +20,7 @@ const TransactionDetails = ({
     closeTimeoutMS={300}
     className={styles.content}
     overlayClassName={styles.overlay}
+    shouldCloseOnOverlayClick
   >
     <Card title="Transaction Details" style={{ width: '100%', height: '100%' }}>
       {/* <Avatar size="large" icon="user" /> */}
