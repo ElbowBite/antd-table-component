@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
 
-import ClientSide from './components/ClientSide/ClientSide';
+import Transactions from './components/Transactions/Transactions';
 
 function App() {
   return (
     <div className="App">
-      <ClientSide />
+      <Transactions />
     </div>
   );
 }

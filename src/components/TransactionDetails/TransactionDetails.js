@@ -13,7 +13,8 @@ const TransactionDetails = ({
   modalShown,
   modalData,
   toggleModal,
-  convertToDate,
+  convertDate,
+  convertTime,
 }) => (
   <ReactModal
     isOpen={modalShown}
@@ -24,9 +25,9 @@ const TransactionDetails = ({
   >
     <Card title="Transaction Details" style={{ width: '100%', height: '100%' }}>
       {/* <Avatar size="large" icon="user" /> */}
-      <p><strong>Creation Date: </strong>{convertToDate(modalData.creationDate)}</p>
-      <p><strong>Value Date: </strong>{convertToDate(modalData.valueDate)}</p>
-      <p><strong>Booking Date: </strong>{convertToDate(modalData.bookingDate)}</p>
+      <p><strong>Creation Date: </strong>{convertDate(modalData.creationDate)} {convertTime(modalData.creationDate)}</p>
+      <p><strong>Value Date: </strong>{convertDate(modalData.valueDate)} {convertTime(modalData.valueDate)}</p>
+      <p><strong>Booking Date: </strong>{convertDate(modalData.bookingDate)} {convertTime(modalData.bookingDate)}</p>
       <p><strong>Amount: </strong>{modalData.currency ? resolvePath(modalData.currency, 'symbol') : '$'}{modalData.amount}</p>
       <p><strong>Type: </strong>{modalData.type}</p>
       <Button type="primary" onClick={() => toggleModal(false)}>Close</Button>
