@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import resolvePath from 'object-resolve-path';
 
-import { Spin, Tabs, Radio, Descriptions, Divider, Icon, Tooltip, Card } from 'antd';
+import { Spin, Tabs, Radio, Divider, Icon, Tooltip, Card, BackTop, Anchor, Affix } from 'antd';
 import TrasactionDetails from '../TransactionDetails/TransactionDetails'; //  Transaction details modal
 
 import * as actions from '../../store/actions';
 import './Transactions.scss'; //  Additional table styles
 import 'antd/dist/antd.css'; //  Default Ant Design styles
+//  import styles from './Transactions.module.scss';
+
+const { Link } = Anchor;
 
 const Transactions = ({
   transList,
@@ -17,6 +19,11 @@ const Transactions = ({
   useEffect(() => {
     fetchList();
   }, []);
+
+  const [filteredData, updateData] = useState(transList); //  Filtered list of transactions
+  useEffect(() => {
+    updateData(transList);
+  }, [transList]);
 
   const [modalShown, toggleModal] = useState(false); //  Modal state
   const [modalData, fillModal] = useState(''); // Modal content state
@@ -28,7 +35,7 @@ const Transactions = ({
   const TRANS_ICONS = {
     DEPOSIT: 'rise',
     WITHDRAWAL: 'fall',
-  }
+  };
   const { TabPane } = Tabs;
   const MONTHS = {
     1: 'January',
@@ -79,7 +86,7 @@ const Transactions = ({
 
   //  Transaction details modal toggler
   const handleClick = (record) => {
-    fillModal(transList.filter((transaction) => transaction.id === record.id)[0]);
+    fillModal(filteredData.filter((transaction) => transaction.id === record.id)[0]);
     toggleModal(true);
   };
   //  Currency with tooltip
@@ -95,7 +102,7 @@ const Transactions = ({
     </Tooltip>
   );
   //  Get each month's transactions
-  const monthlyTransactions = (month) => transList.filter(
+  const monthlyTransactions = (month) => filteredData.filter(
     (t) => new Date(t.creationDate).getMonth() === month - 1,
   );
   // Get each day's transactions
@@ -109,7 +116,12 @@ const Transactions = ({
       if (dalyTransactions(monthlyTransactions(monthNum), i).length) {
         group.push(
           <div key={i} style={{ alignContent: 'center' }}>
-            <Divider style={{ margin: '7px 0 7px 0' }}>{i} {MONTHS[monthNum]}</Divider>
+            <Divider
+              style={{ margin: '7px auto 7px auto' }}
+              id={`${i}-${MONTHS[monthNum]}`}
+            >
+              {i} {MONTHS[monthNum]}
+            </Divider>
             {dalyTransactions(monthlyTransactions(monthNum), i).map(
               (t) => (
                 <Card
@@ -120,6 +132,7 @@ const Transactions = ({
                   style={{ margin: 'auto auto 10px', width: '350px' }}
                   headStyle={{ textAlign: 'left' }}
                   bodyStyle={{ display: 'flex', alignItems: 'center' }}
+                  onClick={() => handleClick(t)}
                 >
                   <Tooltip title={t.type}>
                     <Icon type={TRANS_ICONS[t.type]} style={{ color: COLORS[t.type] }} />
@@ -137,25 +150,60 @@ const Transactions = ({
                 </Card>
               ),
             )}
+            <BackTop />
           </div>,
         );
       }
     }
     return group;
   };
+  //  Building anchors
+  const anchorBuilder = (monthNum) => {
+    const anchors = [];
+    for (let i = 1; i <= MONTHS_LENGTH[monthNum - 1]; i++) {
+      if (dalyTransactions(monthlyTransactions(monthNum), i).length) {
+        anchors.push(<Link href={`#${i}-${MONTHS[monthNum]}`} title={i} />);
+      }
+    }
+    return anchors;
+  };
+  //  Handle filter change
+  const handleFilter = (e) => {
+    const filter = e.target.value;
+    let newList = [];
+    switch (filter) {
+      case 'DEPOSIT': {
+        newList = transList.filter((t) => t.type === filter);
+        break;
+      }
+      case 'WITHDRAWAL': {
+        newList = transList.filter((t) => t.type === filter);
+        break;
+      }
+      default: {
+        newList = transList;
+      }
+    }
+    updateData(newList);
+  };
 
   return (
     <>
-      <div style={{ padding: '10px 10px 10px 10px', margin: 'auto', maxWidth: '500px' }}>
+      <div style={{ padding: '10px 10px 10px 10px', margin: 'auto', maxWidth: '550px' }}>
         <Spin spinning={!transList.length} size="large" tip="loading transactions...">
-          <Radio.Group value="all">
+          <Radio.Group defaultValue="all" onChange={handleFilter}>
             <Radio.Button value="all">All</Radio.Button>
-            <Radio.Button>Deposit</Radio.Button>
-            <Radio.Button>Withdrawal</Radio.Button>
+            <Radio.Button value="DEPOSIT">Deposit</Radio.Button>
+            <Radio.Button value="WITHDRAWAL">Withdrawal</Radio.Button>
           </Radio.Group>
-          <Tabs defaultActiveKey="10"/* {(new Date().getMonth() + 1).toString()} */ size="small" tabBarGutter={15} tabBarStyle={{ margin: '0' }}>
+          <Tabs defaultActiveKey={(new Date().getMonth() + 1).toString()} size="small" tabBarGutter={15} tabBarStyle={{ margin: '0' }}>
             {Object.keys(MONTHS).map(((monthNum) => (
               <TabPane tab={MONTHS[monthNum]} key={monthNum}>
+                <Affix offsetTop={15} style={{ position: 'absolute', margin: '15px 0 0 0' }}>
+                  <Anchor>
+                    {anchorBuilder(monthNum)}
+                  </Anchor>
+                </Affix>
                 {TransactionOfADay(monthNum)}
               </TabPane>
             )))}
@@ -168,6 +216,9 @@ const Transactions = ({
         toggleModal={toggleModal}
         convertDate={convertDate}
         convertTime={convertTime}
+        COLORS={COLORS}
+        TRANS_ICONS={TRANS_ICONS}
+        LINKED_ACC_TYPES={LINKED_ACC_TYPES}
       />
     </>
   );
