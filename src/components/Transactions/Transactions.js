@@ -92,13 +92,13 @@ const Transactions = ({
   //  Currency with tooltip
   const currencyTooltip = (currency) => (
     <Tooltip title={currency.name}>
-      <span style={{ fontSize: '14px' }}>{currency.symbol}</span>
+      <span>{currency.symbol}</span>
     </Tooltip>
   );
   //  Amount styled with tooltip
   const amountTooltip = (amount) => (
     <Tooltip title="Amount">
-      <span style={{ fontSize: '16px', fontWeight: '700' }}>{amount}</span>
+      <span>{amount}</span>
     </Tooltip>
   );
   //  Get each month's transactions
@@ -126,26 +126,26 @@ const Transactions = ({
               (t) => (
                 <Card
                   size="small"
-                  title={currencyTooltip(t.currency)}
-                  extra={amountTooltip(t.amount)}
+                  title={(
+                    <span>
+                      {currencyTooltip(t.currency)} {amountTooltip(t.amount)}
+                    </span>
+                  )}
+                  extra={t.type}
                   hoverable
                   style={{ margin: 'auto auto 10px', width: '350px' }}
                   headStyle={{ textAlign: 'left' }}
                   bodyStyle={{ display: 'flex', alignItems: 'center' }}
                   onClick={() => handleClick(t)}
                 >
-                  <Tooltip title={t.type}>
-                    <Icon type={TRANS_ICONS[t.type]} style={{ color: COLORS[t.type] }} />
-                  </Tooltip>
-                  {/* <Divider type="vertical" /> */}
+                  <Icon type={TRANS_ICONS[t.type]} style={{ color: COLORS[t.type] }} />
                   <Tooltip title="Account number">
                     <span style={{ flex: '1' }}>
-                      {t.linked_account.name}
+                      {t.account.number}
                     </span>
                   </Tooltip>
-                  {/* <Divider type="vertical" /> */}
                   <Tooltip title={LINKED_ACC_TYPES[t.type]}>
-                    {t.account.number}
+                    {t.linked_account.name}
                   </Tooltip>
                 </Card>
               ),
@@ -196,7 +196,13 @@ const Transactions = ({
             <Radio.Button value="DEPOSIT">Deposit</Radio.Button>
             <Radio.Button value="WITHDRAWAL">Withdrawal</Radio.Button>
           </Radio.Group>
-          <Tabs defaultActiveKey={(new Date().getMonth() + 1).toString()} size="small" tabBarGutter={15} tabBarStyle={{ margin: '0' }}>
+          <Tabs
+            defaultActiveKey={(new Date().getMonth() + 1).toString()}
+            size="small"
+            tabBarGutter={15}
+            tabBarStyle={{ margin: '0' }}
+            /* onChange={(activeKey) => handleFilter(activeKey)} */
+          >
             {Object.keys(MONTHS).map(((monthNum) => (
               <TabPane tab={MONTHS[monthNum]} key={monthNum}>
                 <Affix offsetTop={15} style={{ position: 'absolute', margin: '15px 0 0 0' }}>
